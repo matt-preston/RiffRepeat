@@ -53,6 +53,15 @@
       "notes": "_No response_",
       "addedAt": "2026-05-06T20:27:52.604Z",
       "sessions": []
+    },
+    {
+      "id": "you-got-it",
+      "title": "You Got It",
+      "artist": "Roy Orbison",
+      "category": "acoustic",
+      "notes": "_No response_",
+      "addedAt": "2026-05-06T20:29:12.774Z",
+      "sessions": []
     }
   ]
 }
