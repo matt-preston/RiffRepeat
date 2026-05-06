@@ -170,6 +170,15 @@
       "notes": "_No response_",
       "addedAt": "2026-05-06T20:36:17.065Z",
       "sessions": []
+    },
+    {
+      "id": "heart-of-gold",
+      "title": "Heart of Gold",
+      "artist": "Neil Young",
+      "category": "acoustic",
+      "notes": "_No response_",
+      "addedAt": "2026-05-06T20:37:01.655Z",
+      "sessions": []
     }
   ]
 }
