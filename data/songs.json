@@ -134,6 +134,15 @@
       "notes": "_No response_",
       "addedAt": "2026-05-06T20:33:34.231Z",
       "sessions": []
+    },
+    {
+      "id": "smells-like-teen-spirit",
+      "title": "Smells Like Teen Spirit",
+      "artist": "Nirvana",
+      "category": "electric",
+      "notes": "_No response_",
+      "addedAt": "2026-05-06T20:34:20.809Z",
+      "sessions": []
     }
   ]
 }
