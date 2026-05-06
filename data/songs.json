@@ -47,7 +47,11 @@
       "category": "acoustic",
       "notes": "",
       "addedAt": "2026-05-06T20:27:06.615Z",
-      "sessions": []
+      "sessions": [
+        {
+          "date": "2026-05-06"
+        }
+      ]
     },
     {
       "id": "house-of-the-rising-sun",
