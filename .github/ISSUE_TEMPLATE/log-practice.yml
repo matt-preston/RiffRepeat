@@ -4,21 +4,21 @@ title: "[Log Practice]: "
 labels: ["log-practice"]
 body:
   - type: input
-    id: song_id
+    id: log_song_id
     attributes:
       label: Song ID
       placeholder: e.g. wonderwall
     validations:
       required: true
   - type: input
-    id: date
+    id: log_date
     attributes:
       label: Date
       placeholder: YYYY-MM-DD
     validations:
       required: true
   - type: textarea
-    id: notes
+    id: log_notes
     attributes:
       label: Notes
       placeholder: What did you focus on?

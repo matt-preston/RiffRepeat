@@ -8,102 +8,231 @@
     <script defer src="https://cdn.jsdelivr.net/npm/alpinejs@3.x.x/dist/cdn.min.js"></script>
     <style>
         [x-cloak] { display: none !important; }
+        .table-container { scrollbar-width: thin; }
     </style>
 </head>
-<body class="bg-slate-50 text-slate-900 font-sans">
-    <div x-data="practiceApp" class="max-w-4xl mx-auto px-4 py-12" x-cloak>
-        <header class="mb-12 flex justify-between items-end">
+<body class="bg-slate-50 text-slate-900 font-sans min-h-screen">
+    <div x-data="practiceApp" class="max-w-6xl mx-auto px-4 py-12" x-cloak>
+        <header class="mb-12 flex flex-col md:flex-row md:items-end justify-between gap-6">
             <div>
-                <h1 class="text-4xl font-bold text-slate-800">Riff Repeat</h1>
-                <p class="text-slate-500 mt-2">Track your progress, one riff at a time.</p>
+                <h1 class="text-4xl font-bold text-slate-800 flex items-center gap-3">
+                    Riff Repeat <span class="text-3xl">🎸</span>
+                </h1>
+                <p class="text-slate-500 mt-2 text-lg">Your serverless guitar practice companion.</p>
             </div>
-            <div class="text-right">
-                <div class="text-sm font-medium text-slate-400 uppercase tracking-wider">Last Session</div>
-                <div class="text-2xl font-bold text-indigo-600" x-text="globalLastPracticed"></div>
+            <div class="flex items-center gap-4">
+                <div class="text-right hidden md:block">
+                    <div class="text-xs font-semibold text-slate-400 uppercase tracking-widest">Last Activity</div>
+                    <div class="text-2xl font-bold text-indigo-600" x-text="globalLastPracticed"></div>
+                </div>
+                <button @click="showAddModal = true" class="py-3 px-6 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-bold shadow-lg shadow-indigo-200 transition-all flex items-center gap-2">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M10 3a1 1 0 011 1v5h5a1 1 0 110 2h-5v5a1 1 0 11-2 0v-5H4a1 1 0 110-2h5V4a1 1 0 011-1z" clip-rule="evenodd" /></svg>
+                    Add Song
+                </button>
             </div>
         </header>
 
-        <!-- Stats Overview -->
-        <div class="grid grid-cols-1 md:grid-cols-3 gap-6 mb-12">
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                <div class="text-sm text-slate-500 mb-1">Total Songs</div>
-                <div class="text-3xl font-bold" x-text="songs.length"></div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100">
-                <div class="text-sm text-slate-500 mb-1">Practiced this week</div>
-                <div class="text-3xl font-bold" x-text="practicedThisWeek"></div>
-            </div>
-            <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex items-center justify-center">
-                <a :href="addSongUrl" target="_blank" class="w-full py-3 px-4 bg-indigo-600 hover:bg-indigo-700 text-white rounded-xl font-semibold transition text-center">
-                    + Add New Song
-                </a>
-            </div>
-        </div>
-
-        <!-- Song List -->
-        <div class="space-y-4">
-            <template x-for="song in sortedSongs" :key="song.id">
-                <div class="bg-white p-6 rounded-2xl shadow-sm border border-slate-100 flex flex-col md:flex-row md:items-center justify-between hover:border-indigo-200 transition">
-                    <div>
-                        <h3 class="text-xl font-bold text-slate-800" x-text="song.title"></h3>
-                        <p class="text-slate-500" x-text="song.artist"></p>
-                    </div>
-                    
-                    <div class="mt-4 md:mt-0 flex items-center space-x-8">
-                        <div class="text-right">
-                            <div class="text-xs font-medium text-slate-400 uppercase tracking-wider">Last Practiced</div>
-                            <div class="font-semibold" :class="getDaysColor(song)" x-text="getLastPracticedText(song)"></div>
-                        </div>
-                        
-                        <a :href="getLogPracticeUrl(song)" target="_blank" class="py-2 px-6 bg-slate-100 hover:bg-indigo-50 hover:text-indigo-600 text-slate-600 rounded-lg font-medium transition">
-                            Log Practice
-                        </a>
-                        <a :href="getDeleteSongUrl(song)" target="_blank" class="p-2 text-slate-300 hover:text-rose-500 transition" title="Delete Song">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" />
-                            </svg>
-                        </a>
-                    </div>
+        <!-- Filters & Stats -->
+        <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
+            <div class="lg:col-span-1 flex flex-col gap-4">
+                <div class="relative">
+                    <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
+                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
+                    </span>
+                    <input type="text" x-model="search" placeholder="Search songs or artists..." class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
                 </div>
-            </template>
+                <select x-model="filterCategory" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none appearance-none transition cursor-pointer">
+                    <option value="">All Categories</option>
+                    <option value="acoustic">Acoustic</option>
+                    <option value="electric">Electric</option>
+                </select>
+            </div>
+
+            <div class="lg:col-span-3 grid grid-cols-2 md:grid-cols-4 gap-4">
+                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                    <div class="text-xs font-bold text-slate-400 uppercase">Total</div>
+                    <div class="text-2xl font-bold" x-text="songs.length"></div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                    <div class="text-xs font-bold text-slate-400 uppercase">Acoustic</div>
+                    <div class="text-2xl font-bold" x-text="songs.filter(s => s.category === 'acoustic').length"></div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                    <div class="text-xs font-bold text-slate-400 uppercase">Electric</div>
+                    <div class="text-2xl font-bold" x-text="songs.filter(s => s.category === 'electric').length"></div>
+                </div>
+                <div class="bg-white p-4 rounded-xl border border-slate-200">
+                    <div class="text-xs font-bold text-slate-400 uppercase">Active</div>
+                    <div class="text-2xl font-bold text-indigo-600" x-text="practicedThisWeek"></div>
+                </div>
+            </div>
         </div>
 
-        <footer class="mt-20 text-center text-slate-400 text-sm">
-            <p>Powered by GitHub Issues & Actions. Securely serverless.</p>
+        <!-- Table View -->
+        <div class="bg-white rounded-2xl shadow-sm border border-slate-200 overflow-hidden">
+            <div class="overflow-x-auto table-container">
+                <table class="w-full text-left border-collapse">
+                    <thead>
+                        <tr class="bg-slate-50 border-b border-slate-200">
+                            <th @click="sort('title')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 transition group">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Song Title</span>
+                                    <span x-show="sortCol === 'title'" x-text="sortDir === 'asc' ? '↑' : '↓'" class="text-indigo-600"></span>
+                                </div>
+                            </th>
+                            <th @click="sort('artist')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 transition group">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Artist</span>
+                                    <span x-show="sortCol === 'artist'" x-text="sortDir === 'asc' ? '↑' : '↓'" class="text-indigo-600"></span>
+                                </div>
+                            </th>
+                            <th @click="sort('category')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 transition group">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Category</span>
+                                    <span x-show="sortCol === 'category'" x-text="sortDir === 'asc' ? '↑' : '↓'" class="text-indigo-600"></span>
+                                </div>
+                            </th>
+                            <th @click="sort('lastPracticed')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 transition group">
+                                <div class="flex items-center gap-2">
+                                    <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Last Practiced</span>
+                                    <span x-show="sortCol === 'lastPracticed'" x-text="sortDir === 'asc' ? '↑' : '↓'" class="text-indigo-600"></span>
+                                </div>
+                            </th>
+                            <th class="px-6 py-4 text-right">
+                                <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Actions</span>
+                            </th>
+                        </tr>
+                    </thead>
+                    <tbody class="divide-y divide-slate-100">
+                        <template x-for="song in filteredAndSortedSongs" :key="song.id">
+                            <tr class="hover:bg-slate-50 transition group">
+                                <td class="px-6 py-4">
+                                    <div class="font-bold text-slate-800" x-text="song.title"></div>
+                                    <div class="text-xs text-slate-400 md:hidden" x-text="song.artist"></div>
+                                </td>
+                                <td class="px-6 py-4 hidden md:table-cell">
+                                    <div class="text-slate-600" x-text="song.artist"></div>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <span :class="{
+                                        'bg-emerald-50 text-emerald-700 ring-1 ring-emerald-600/20': song.category === 'acoustic',
+                                        'bg-blue-50 text-blue-700 ring-1 ring-blue-600/20': song.category === 'electric'
+                                    }" class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider" x-text="song.category"></span>
+                                </td>
+                                <td class="px-6 py-4">
+                                    <div class="text-sm font-medium" :class="getDaysColor(song)" x-text="getLastPracticedText(song)"></div>
+                                </td>
+                                <td class="px-6 py-4 text-right space-x-2">
+                                    <a :href="getLogPracticeUrl(song)" target="_blank" class="inline-flex items-center justify-center p-2 bg-slate-100 hover:bg-indigo-600 hover:text-white text-slate-600 rounded-lg transition" title="Log Practice">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                                    </a>
+                                    <a :href="getDeleteSongUrl(song)" target="_blank" class="inline-flex items-center justify-center p-2 hover:bg-rose-50 hover:text-rose-600 text-slate-300 rounded-lg transition" title="Delete Song">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
+                                    </a>
+                                </td>
+                            </tr>
+                        </template>
+                    </tbody>
+                </table>
+            </div>
+            <div x-show="filteredAndSortedSongs.length === 0" class="py-20 text-center text-slate-400">
+                <p>No songs found matching your criteria.</p>
+            </div>
+        </div>
+
+        <!-- Footer -->
+        <footer class="mt-20 text-center">
+            <div class="text-slate-400 text-sm">Powered by GitHub Actions & Issues</div>
+            <div class="flex justify-center gap-6 mt-4">
+                <a :href="repoUrl" class="text-indigo-600 hover:underline text-xs font-bold uppercase tracking-widest">Source Repo</a>
+                <span class="text-slate-200">|</span>
+                <a href="#" @click.prevent="window.location.reload()" class="text-slate-400 hover:text-indigo-600 text-xs font-bold uppercase tracking-widest">Refresh Data</a>
+            </div>
         </footer>
+
+        <!-- Add Song Selection Modal -->
+        <div x-show="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" @click.self="showAddModal = false" x-transition>
+            <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 transform transition-all" @click.stop>
+                <h2 class="text-2xl font-bold text-slate-800 mb-6">Select Category</h2>
+                <div class="grid grid-cols-2 gap-4 mb-8">
+                    <button @click="openAddSong('acoustic')" class="group p-6 border-2 border-slate-100 hover:border-emerald-500 rounded-2xl transition-all text-center">
+                        <div class="text-3xl mb-3 group-hover:scale-110 transition">🎸</div>
+                        <div class="font-bold text-slate-700">Acoustic</div>
+                    </button>
+                    <button @click="openAddSong('electric')" class="group p-6 border-2 border-slate-100 hover:border-blue-500 rounded-2xl transition-all text-center">
+                        <div class="text-3xl mb-3 group-hover:scale-110 transition">🔌</div>
+                        <div class="font-bold text-slate-700">Electric</div>
+                    </button>
+                </div>
+                <button @click="showAddModal = false" class="w-full py-3 text-slate-400 hover:text-slate-600 font-medium transition">Cancel</button>
+            </div>
+        </div>
     </div>
 
     <script>
         document.addEventListener('alpine:init', () => {
             Alpine.data('practiceApp', () => ({
                 songs: [],
-                repoUrl: window.location.origin.includes('github.io') 
-                    ? window.location.href.split('/').slice(0, 5).join('/') 
-                    : 'https://github.com/OWNER/REPO', // Placeholder for local dev
+                search: '',
+                filterCategory: '',
+                sortCol: 'lastPracticed',
+                sortDir: 'desc',
+                showAddModal: false,
+                repoUrl: '',
 
                 async init() {
+                    this.detectRepoUrl();
                     try {
                         const res = await fetch('data/songs.json');
                         const data = await res.json();
                         this.songs = data.songs;
-                        
-                        // Try to auto-detect repo URL if on GitHub Pages
-                        const pathParts = window.location.pathname.split('/');
-                        if (window.location.hostname.endsWith('github.io')) {
-                            const user = window.location.hostname.split('.')[0];
-                            const repo = pathParts[1];
-                            this.repoUrl = `https://github.com/${user}/${repo}`;
-                        }
                     } catch (e) {
                         console.error('Failed to load songs:', e);
                     }
                 },
 
-                get sortedSongs() {
-                    return [...this.songs].sort((a, b) => {
-                        const dateA = this.getLatestDate(a);
-                        const dateB = this.getLatestDate(b);
-                        return dateB - dateA;
+                detectRepoUrl() {
+                    const host = window.location.hostname;
+                    const path = window.location.pathname;
+                    if (host.endsWith('github.io')) {
+                        const user = host.split('.')[0];
+                        const repo = path.split('/')[1];
+                        this.repoUrl = `https://github.com/${user}/${repo}`;
+                    } else {
+                        // Fallback for local development - you'll need to set this manually or via .env
+                        this.repoUrl = 'https://github.com/OWNER/REPO';
+                    }
+                },
+
+                sort(col) {
+                    if (this.sortCol === col) {
+                        this.sortDir = this.sortDir === 'asc' ? 'desc' : 'asc';
+                    } else {
+                        this.sortCol = col;
+                        this.sortDir = 'desc';
+                    }
+                },
+
+                get filteredAndSortedSongs() {
+                    let result = this.songs.filter(s => {
+                        const matchesSearch = s.title.toLowerCase().includes(this.search.toLowerCase()) || 
+                                              s.artist.toLowerCase().includes(this.search.toLowerCase());
+                        const matchesCategory = !this.filterCategory || s.category === this.filterCategory;
+                        return matchesSearch && matchesCategory;
+                    });
+
+                    return result.sort((a, b) => {
+                        let valA, valB;
+                        if (this.sortCol === 'lastPracticed') {
+                            valA = this.getLatestDate(a).getTime();
+                            valB = this.getLatestDate(b).getTime();
+                        } else {
+                            valA = a[this.sortCol].toLowerCase();
+                            valB = b[this.sortCol].toLowerCase();
+                        }
+
+                        if (this.sortDir === 'asc') return valA > valB ? 1 : -1;
+                        return valA < valB ? 1 : -1;
                     });
                 },
 
@@ -111,20 +240,12 @@
                     if (this.songs.length === 0) return 'Never';
                     const allDates = this.songs.flatMap(s => s.sessions.map(sess => new Date(sess.date)));
                     if (allDates.length === 0) return 'None';
-                    const latest = new Date(Math.max(...allDates));
-                    return this.formatRelativeDate(latest);
+                    return this.formatRelativeDate(new Date(Math.max(...allDates)));
                 },
 
                 get practicedThisWeek() {
-                    const now = new Date();
-                    const weekAgo = new Date(now.getTime() - 7 * 24 * 60 * 60 * 1000);
-                    return this.songs.filter(s => 
-                        s.sessions.some(sess => new Date(sess.date) >= weekAgo)
-                    ).length;
-                },
-
-                get addSongUrl() {
-                    return `${this.repoUrl}/issues/new?template=add-song.yml`;
+                    const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
+                    return this.songs.filter(s => s.sessions.some(sess => new Date(sess.date) >= weekAgo)).length;
                 },
 
                 getLatestDate(song) {
@@ -134,15 +255,11 @@
 
                 getLastPracticedText(song) {
                     const latest = this.getLatestDate(song);
-                    if (latest.getTime() === 0) return 'Never';
-                    return this.formatRelativeDate(latest);
+                    return latest.getTime() === 0 ? 'Never' : this.formatRelativeDate(latest);
                 },
 
                 formatRelativeDate(date) {
-                    const now = new Date();
-                    const diffTime = Math.abs(now - date);
-                    const diffDays = Math.floor(diffTime / (1000 * 60 * 60 * 24));
-                    
+                    const diffDays = Math.floor(Math.abs(Date.now() - date) / (1000 * 60 * 60 * 24));
                     if (diffDays === 0) return 'Today';
                     if (diffDays === 1) return 'Yesterday';
                     if (diffDays < 7) return `${diffDays} days ago`;
@@ -152,21 +269,25 @@
                 getDaysColor(song) {
                     const latest = this.getLatestDate(song);
                     if (latest.getTime() === 0) return 'text-slate-400';
-                    const diffDays = Math.floor((new Date() - latest) / (1000 * 60 * 60 * 24));
-                    if (diffDays < 2) return 'text-green-600';
+                    const diffDays = Math.floor((Date.now() - latest) / (1000 * 60 * 60 * 24));
+                    if (diffDays < 2) return 'text-emerald-600';
                     if (diffDays < 5) return 'text-amber-500';
                     return 'text-rose-500';
                 },
 
+                openAddSong(category) {
+                    this.showAddModal = false;
+                    const url = `${this.repoUrl}/issues/new?template=add-song.yml&song_category=${category}`;
+                    window.open(url, '_blank');
+                },
+
                 getLogPracticeUrl(song) {
                     const today = new Date().toISOString().split('T')[0];
-                    const body = encodeURIComponent(`### Song ID\n\n${song.id}\n\n### Date\n\n${today}\n\n### Notes\n\n(Enter notes here)`);
-                    return `${this.repoUrl}/issues/new?template=log-practice.yml&body=${body}`;
+                    return `${this.repoUrl}/issues/new?template=log-practice.yml&log_song_id=${song.id}&log_date=${today}`;
                 },
 
                 getDeleteSongUrl(song) {
-                    const body = encodeURIComponent(`### Song ID\n\n${song.id}`);
-                    return `${this.repoUrl}/issues/new?template=delete-song.yml&title=${encodeURIComponent('[Delete Song]: ' + song.title)}&body=${body}`;
+                    return `${this.repoUrl}/issues/new?template=delete-song.yml&delete_song_id=${song.id}&title=${encodeURIComponent('[Delete Song]: ' + song.title)}`;
                 }
             }));
         });

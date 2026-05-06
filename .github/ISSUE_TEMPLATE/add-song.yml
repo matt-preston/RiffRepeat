@@ -4,16 +4,25 @@ title: "[New Song]: "
 labels: ["new-song"]
 body:
   - type: input
-    id: title
+    id: song_title
     attributes:
       label: Song Title
       placeholder: e.g. Blackbird
     validations:
       required: true
   - type: input
-    id: artist
+    id: artist_name
     attributes:
       label: Artist
       placeholder: e.g. The Beatles
+    validations:
+      required: true
+  - type: dropdown
+    id: song_category
+    attributes:
+      label: Category
+      options:
+        - acoustic
+        - electric
     validations:
       required: true
