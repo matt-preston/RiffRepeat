@@ -17,7 +17,12 @@
       "title": "Supersonic",
       "artist": "Oasis",
       "addedAt": "2026-05-06T17:18:59.126Z",
-      "sessions": []
+      "sessions": [
+        {
+          "date": "2026-05-06",
+          "notes": "_No response_"
+        }
+      ]
     }
   ]
 }
