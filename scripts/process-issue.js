@@ -103,7 +103,11 @@ async function run() {
 function extractField(body, fieldName) {
   const regex = new RegExp(`### ${fieldName}\\s+([\\s\\S]*?)(?=\\n###|\\r\\n###|$)`, 'i');
   const match = body.match(regex);
-  return match ? match[1].trim() : null;
+  if (match) {
+    const value = match[1].trim();
+    return value === '_No response_' ? '' : value;
+  }
+  return null;
 }
 
 run();
