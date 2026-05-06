@@ -277,17 +277,32 @@
 
                 openAddSong(category) {
                     this.showAddModal = false;
-                    const url = `${this.repoUrl}/issues/new?template=add-song.yml&song_category=${category}`;
+                    const params = new URLSearchParams({
+                        template: 'add-song.yml',
+                        song_category: category
+                    });
+                    const url = `${this.repoUrl}/issues/new?${params.toString()}`;
                     window.open(url, '_blank');
                 },
 
                 getLogPracticeUrl(song) {
                     const today = new Date().toISOString().split('T')[0];
-                    return `${this.repoUrl}/issues/new?template=log-practice.yml&log_song_id=${song.id}&log_date=${today}`;
+                    const params = new URLSearchParams({
+                        template: 'log-practice.yml',
+                        log_song_id: song.id,
+                        log_date: today,
+                        title: `[Log Practice]: ${song.title}`
+                    });
+                    return `${this.repoUrl}/issues/new?${params.toString()}`;
                 },
 
                 getDeleteSongUrl(song) {
-                    return `${this.repoUrl}/issues/new?template=delete-song.yml&delete_song_id=${song.id}&title=${encodeURIComponent('[Delete Song]: ' + song.title)}`;
+                    const params = new URLSearchParams({
+                        template: 'delete-song.yml',
+                        delete_song_id: song.id,
+                        title: `[Delete Song]: ${song.title}`
+                    });
+                    return `${this.repoUrl}/issues/new?${params.toString()}`;
                 }
             }));
         });
