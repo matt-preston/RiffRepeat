@@ -17,8 +17,3 @@ body:
       placeholder: YYYY-MM-DD
     validations:
       required: true
-  - type: textarea
-    id: log_notes
-    attributes:
-      label: Notes
-      placeholder: What did you focus on?

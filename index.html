@@ -39,7 +39,7 @@
                     <span class="absolute inset-y-0 left-0 pl-3 flex items-center text-slate-400">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" viewBox="0 0 20 20" fill="currentColor"><path fill-rule="evenodd" d="M8 4a4 4 0 100 8 4 4 0 000-8zM2 8a6 6 0 1110.89 3.476l4.817 4.817a1 1 0 01-1.414 1.414l-4.816-4.816A6 6 0 012 8z" clip-rule="evenodd" /></svg>
                     </span>
-                    <input type="text" x-model="search" placeholder="Search songs or artists..." class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
+                    <input type="text" x-model="search" placeholder="Search songs, artists, or notes..." class="w-full pl-10 pr-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 focus:border-indigo-500 outline-none transition">
                 </div>
                 <select x-model="filterCategory" class="w-full px-4 py-3 bg-white border border-slate-200 rounded-xl focus:ring-2 focus:ring-indigo-500 outline-none appearance-none transition cursor-pointer">
                     <option value="">All Categories</option>
@@ -74,25 +74,28 @@
                 <table class="w-full text-left border-collapse">
                     <thead>
                         <tr class="bg-slate-50 border-b border-slate-200">
-                            <th @click="sort('title')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 transition group">
+                            <th @click="sort('title')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 transition group whitespace-nowrap">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Song Title</span>
                                     <span x-show="sortCol === 'title'" x-text="sortDir === 'asc' ? '↑' : '↓'" class="text-indigo-600"></span>
                                 </div>
                             </th>
-                            <th @click="sort('artist')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 transition group">
+                            <th @click="sort('artist')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 transition group whitespace-nowrap">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Artist</span>
                                     <span x-show="sortCol === 'artist'" x-text="sortDir === 'asc' ? '↑' : '↓'" class="text-indigo-600"></span>
                                 </div>
                             </th>
-                            <th @click="sort('category')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 transition group">
+                            <th @click="sort('category')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 transition group whitespace-nowrap">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Category</span>
                                     <span x-show="sortCol === 'category'" x-text="sortDir === 'asc' ? '↑' : '↓'" class="text-indigo-600"></span>
                                 </div>
                             </th>
-                            <th @click="sort('lastPracticed')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 transition group">
+                            <th class="px-6 py-4 whitespace-nowrap">
+                                <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Notes</span>
+                            </th>
+                            <th @click="sort('lastPracticed')" class="px-6 py-4 cursor-pointer hover:text-indigo-600 transition group whitespace-nowrap">
                                 <div class="flex items-center gap-2">
                                     <span class="text-xs font-bold text-slate-500 uppercase tracking-widest">Last Practiced</span>
                                     <span x-show="sortCol === 'lastPracticed'" x-text="sortDir === 'asc' ? '↑' : '↓'" class="text-indigo-600"></span>
@@ -120,9 +123,12 @@
                                     }" class="px-2 py-1 rounded text-[10px] font-bold uppercase tracking-wider" x-text="song.category"></span>
                                 </td>
                                 <td class="px-6 py-4">
+                                    <div class="text-sm text-slate-500 italic max-w-xs truncate" :title="song.notes" x-text="song.notes || '-'"></div>
+                                </td>
+                                <td class="px-6 py-4">
                                     <div class="text-sm font-medium" :class="getDaysColor(song)" x-text="getLastPracticedText(song)"></div>
                                 </td>
-                                <td class="px-6 py-4 text-right space-x-2">
+                                <td class="px-6 py-4 text-right space-x-1 whitespace-nowrap">
                                     <a :href="getLogPracticeUrl(song)" target="_blank" class="inline-flex items-center justify-center p-2 bg-slate-100 hover:bg-indigo-600 hover:text-white text-slate-600 rounded-lg transition" title="Log Practice">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
                                     </a>
@@ -153,14 +159,14 @@
         <!-- Add Song Selection Modal -->
         <div x-show="showAddModal" class="fixed inset-0 z-50 flex items-center justify-center p-4 bg-slate-900/60 backdrop-blur-sm" @click.self="showAddModal = false" x-transition>
             <div class="bg-white w-full max-w-md rounded-2xl shadow-2xl p-8 transform transition-all" @click.stop>
-                <h2 class="text-2xl font-bold text-slate-800 mb-6">Select Category</h2>
+                <h2 class="text-2xl font-bold text-slate-800 mb-6 text-center">Select Category</h2>
                 <div class="grid grid-cols-2 gap-4 mb-8">
                     <button @click="openAddSong('acoustic')" class="group p-6 border-2 border-slate-100 hover:border-emerald-500 rounded-2xl transition-all text-center">
-                        <div class="text-3xl mb-3 group-hover:scale-110 transition">🎸</div>
+                        <div class="text-4xl mb-3 group-hover:scale-110 transition">🎸</div>
                         <div class="font-bold text-slate-700">Acoustic</div>
                     </button>
                     <button @click="openAddSong('electric')" class="group p-6 border-2 border-slate-100 hover:border-blue-500 rounded-2xl transition-all text-center">
-                        <div class="text-3xl mb-3 group-hover:scale-110 transition">🔌</div>
+                        <div class="text-4xl mb-3 group-hover:scale-110 transition">🔌</div>
                         <div class="font-bold text-slate-700">Electric</div>
                     </button>
                 </div>
@@ -199,7 +205,6 @@
                         const repo = path.split('/')[1];
                         this.repoUrl = `https://github.com/${user}/${repo}`;
                     } else {
-                        // Fallback for local development - you'll need to set this manually or via .env
                         this.repoUrl = 'https://github.com/OWNER/REPO';
                     }
                 },
@@ -215,8 +220,10 @@
 
                 get filteredAndSortedSongs() {
                     let result = this.songs.filter(s => {
-                        const matchesSearch = s.title.toLowerCase().includes(this.search.toLowerCase()) || 
-                                              s.artist.toLowerCase().includes(this.search.toLowerCase());
+                        const searchLower = this.search.toLowerCase();
+                        const matchesSearch = s.title.toLowerCase().includes(searchLower) || 
+                                              s.artist.toLowerCase().includes(searchLower) ||
+                                              (s.notes && s.notes.toLowerCase().includes(searchLower));
                         const matchesCategory = !this.filterCategory || s.category === this.filterCategory;
                         return matchesSearch && matchesCategory;
                     });
@@ -227,8 +234,8 @@
                             valA = this.getLatestDate(a).getTime();
                             valB = this.getLatestDate(b).getTime();
                         } else {
-                            valA = a[this.sortCol].toLowerCase();
-                            valB = b[this.sortCol].toLowerCase();
+                            valA = (a[this.sortCol] || '').toLowerCase();
+                            valB = (b[this.sortCol] || '').toLowerCase();
                         }
 
                         if (this.sortDir === 'asc') return valA > valB ? 1 : -1;
@@ -277,9 +284,11 @@
 
                 openAddSong(category) {
                     this.showAddModal = false;
-                    const value = category.charAt(0).toUpperCase() + category.slice(1);
-                    // Use manual concatenation for the category to ensure it matches the dropdown string exactly
-                    const url = `${this.repoUrl}/issues/new?template=add-song.yml&category=${value}`;
+                    const params = new URLSearchParams({
+                        template: 'add-song.yml',
+                        song_category: category
+                    });
+                    const url = `${this.repoUrl}/issues/new?${params.toString()}`;
                     window.open(url, '_blank');
                 },
 

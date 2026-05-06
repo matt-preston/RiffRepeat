@@ -17,12 +17,15 @@ body:
       placeholder: e.g. The Beatles
     validations:
       required: true
-  - type: dropdown
-    id: category
+  - type: input
+    id: song_category
     attributes:
       label: Category
-      options:
-        - Acoustic
-        - Electric
+      placeholder: acoustic or electric
     validations:
       required: true
+  - type: input
+    id: song_notes
+    attributes:
+      label: Notes
+      placeholder: e.g. Tuning, difficulty, etc.

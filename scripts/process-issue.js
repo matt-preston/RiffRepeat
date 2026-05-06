@@ -23,9 +23,16 @@ async function run() {
       console.log('Detected: New Song');
       const songTitle = extractField(body, 'Song Title');
       const artist = extractField(body, 'Artist');
-      const category = (extractField(body, 'Category') || 'Acoustic').toLowerCase();
+      let category = (extractField(body, 'Category') || '').toLowerCase().trim();
+      const notes = extractField(body, 'Notes') || '';
       
       if (!songTitle || !artist) throw new Error('Missing title or artist');
+
+      // Validate category
+      if (category !== 'acoustic' && category !== 'electric') {
+        console.log(`Invalid category "${category}", defaulting to acoustic`);
+        category = 'acoustic';
+      }
 
       const id = songTitle.toLowerCase().replace(/[^a-z0-9]/g, '-');
       
@@ -37,6 +44,7 @@ async function run() {
           title: songTitle,
           artist,
           category,
+          notes,
           addedAt: new Date().toISOString(),
           sessions: []
         });
@@ -47,14 +55,13 @@ async function run() {
       console.log('Detected: Log Practice');
       const songId = extractField(body, 'Song ID');
       const date = extractField(body, 'Date');
-      const notes = extractField(body, 'Notes') || '';
 
       if (!songId || !date) throw new Error('Missing song ID or date');
 
       const song = data.songs.find(s => s.id === songId);
       if (!song) throw new Error(`Song not found: ${songId}`);
 
-      song.sessions.push({ date, notes });
+      song.sessions.push({ date });
       actionTaken = true;
       labelToAdd = 'log-practice';
     } else if (title.startsWith('[Delete Song]:') || labels.includes('delete-song')) {
