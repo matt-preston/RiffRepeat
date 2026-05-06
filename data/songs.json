@@ -11,6 +11,13 @@
           "notes": "Initial practice session"
         }
       ]
+    },
+    {
+      "id": "supersonic",
+      "title": "Supersonic",
+      "artist": "Oasis",
+      "addedAt": "2026-05-06T17:18:59.126Z",
+      "sessions": []
     }
   ]
 }
