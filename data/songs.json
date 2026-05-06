@@ -89,6 +89,15 @@
       "notes": "_No response_",
       "addedAt": "2026-05-06T20:31:11.794Z",
       "sessions": []
+    },
+    {
+      "id": "should-i-stay-or-should-i-go",
+      "title": "Should I Stay or Should I Go",
+      "artist": "The Clash",
+      "category": "electric",
+      "notes": "_No response_",
+      "addedAt": "2026-05-06T20:31:59.460Z",
+      "sessions": []
     }
   ]
 }
