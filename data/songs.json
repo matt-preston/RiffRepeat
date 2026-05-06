@@ -71,6 +71,15 @@
       "notes": "_No response_",
       "addedAt": "2026-05-06T20:30:06.608Z",
       "sessions": []
+    },
+    {
+      "id": "something",
+      "title": "Something",
+      "artist": "George Harrison",
+      "category": "acoustic",
+      "notes": "_No response_",
+      "addedAt": "2026-05-06T20:30:52.528Z",
+      "sessions": []
     }
   ]
 }
