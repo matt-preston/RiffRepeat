@@ -16,7 +16,11 @@
       "category": "electric",
       "notes": "",
       "addedAt": "2026-05-06T18:07:06.141Z",
-      "sessions": []
+      "sessions": [
+        {
+          "date": "2026-05-06"
+        }
+      ]
     },
     {
       "id": "karma-police",
