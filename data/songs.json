@@ -143,6 +143,15 @@
       "notes": "_No response_",
       "addedAt": "2026-05-06T20:34:20.809Z",
       "sessions": []
+    },
+    {
+      "id": "banana-pancakes",
+      "title": "Banana Pancakes",
+      "artist": "Jack Johnson",
+      "category": "acoustic",
+      "notes": "_No response_",
+      "addedAt": "2026-05-06T20:34:49.232Z",
+      "sessions": []
     }
   ]
 }
