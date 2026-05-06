@@ -179,6 +179,15 @@
       "notes": "_No response_",
       "addedAt": "2026-05-06T20:37:01.655Z",
       "sessions": []
+    },
+    {
+      "id": "wild-world",
+      "title": "Wild World",
+      "artist": "Cat Stevens",
+      "category": "acoustic",
+      "notes": "_No response_",
+      "addedAt": "2026-05-06T20:37:52.853Z",
+      "sessions": []
     }
   ]
 }
