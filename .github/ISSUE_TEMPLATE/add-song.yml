@@ -1,0 +1,19 @@
+name: Add Song
+description: Add a new song to your practice list
+title: "[New Song]: "
+labels: ["new-song"]
+body:
+  - type: input
+    id: title
+    attributes:
+      label: Song Title
+      placeholder: e.g. Blackbird
+    validations:
+      required: true
+  - type: input
+    id: artist
+    attributes:
+      label: Artist
+      placeholder: e.g. The Beatles
+    validations:
+      required: true

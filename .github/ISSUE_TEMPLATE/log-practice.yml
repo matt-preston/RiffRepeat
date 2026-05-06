@@ -1,0 +1,24 @@
+name: Log Practice
+description: Record a practice session for a song
+title: "[Log Practice]: "
+labels: ["log-practice"]
+body:
+  - type: input
+    id: song_id
+    attributes:
+      label: Song ID
+      placeholder: e.g. wonderwall
+    validations:
+      required: true
+  - type: input
+    id: date
+    attributes:
+      label: Date
+      placeholder: YYYY-MM-DD
+    validations:
+      required: true
+  - type: textarea
+    id: notes
+    attributes:
+      label: Notes
+      placeholder: What did you focus on?

@@ -1,0 +1,16 @@
+{
+  "songs": [
+    {
+      "id": "wonderwall",
+      "title": "Wonderwall",
+      "artist": "Oasis",
+      "addedAt": "2026-05-06T00:00:00Z",
+      "sessions": [
+        {
+          "date": "2026-05-06",
+          "notes": "Initial practice session"
+        }
+      ]
+    }
+  ]
+}
