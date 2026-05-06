@@ -26,6 +26,15 @@
       "notes": "_No response_",
       "addedAt": "2026-05-06T20:24:43.907Z",
       "sessions": []
+    },
+    {
+      "id": "no-surprises",
+      "title": "No Surprises",
+      "artist": "Radiohead",
+      "category": "acoustic",
+      "notes": "Capo 3rd fret",
+      "addedAt": "2026-05-06T20:26:38.041Z",
+      "sessions": []
     }
   ]
 }
