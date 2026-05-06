@@ -1,19 +1,6 @@
 {
   "songs": [
     {
-      "id": "wonderwall",
-      "title": "Wonderwall",
-      "artist": "Oasis",
-      "category": "acoustic",
-      "notes": "Classic strumming pattern",
-      "addedAt": "2026-05-06T00:00:00Z",
-      "sessions": [
-        {
-          "date": "2026-05-06"
-        }
-      ]
-    },
-    {
       "id": "song-2",
       "title": "Song 2",
       "artist": "Blue",
