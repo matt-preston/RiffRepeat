@@ -152,6 +152,15 @@
       "notes": "_No response_",
       "addedAt": "2026-05-06T20:34:49.232Z",
       "sessions": []
+    },
+    {
+      "id": "hallelujah",
+      "title": "Hallelujah",
+      "artist": "Jeff Buckley",
+      "category": "acoustic",
+      "notes": "_No response_",
+      "addedAt": "2026-05-06T20:35:48.980Z",
+      "sessions": []
     }
   ]
 }
