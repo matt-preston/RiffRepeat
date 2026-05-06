@@ -6,46 +6,96 @@ const github = require('@actions/github');
 async function run() {
   try {
     const issue = github.context.payload.issue;
-    const labels = issue.labels.map(l => l.name);
+    const title = issue.title;
     const body = issue.body;
+    const labels = issue.labels.map(l => l.name);
+    
+    console.log(`Processing Issue: "${title}"`);
+    console.log(`Labels: ${labels.join(', ')}`);
 
     const dataPath = path.join(process.cwd(), 'data/songs.json');
     const data = JSON.parse(fs.readFileSync(dataPath, 'utf8'));
 
-    if (labels.includes('new-song')) {
-      const title = extractField(body, 'Song Title');
+    let actionTaken = false;
+    let labelToAdd = null;
+
+    // Detect action type from title or labels
+    if (title.startsWith('[New Song]:') || labels.includes('new-song')) {
+      console.log('Detected: New Song');
+      const songTitle = extractField(body, 'Song Title');
       const artist = extractField(body, 'Artist');
       
-      if (!title || !artist) throw new Error('Missing title or artist');
+      if (!songTitle || !artist) throw new Error('Missing title or artist in issue body');
 
-      const id = title.toLowerCase().replace(/[^a-z0-9]/g, '-');
+      const id = songTitle.toLowerCase().replace(/[^a-z0-9]/g, '-');
       
       if (data.songs.find(s => s.id === id)) {
-        console.log(`Song with id ${id} already exists.`);
+        console.log(`Song with id "${id}" already exists.`);
       } else {
         data.songs.push({
           id,
-          title,
+          title: songTitle,
           artist,
           addedAt: new Date().toISOString(),
           sessions: []
         });
+        actionTaken = true;
+        labelToAdd = 'new-song';
       }
-    } else if (labels.includes('log-practice')) {
+    } else if (title.startsWith('[Log Practice]:') || labels.includes('log-practice')) {
+      console.log('Detected: Log Practice');
       const songId = extractField(body, 'Song ID');
       const date = extractField(body, 'Date');
       const notes = extractField(body, 'Notes') || '';
 
-      if (!songId || !date) throw new Error('Missing song ID or date');
+      if (!songId || !date) throw new Error('Missing song ID or date in issue body');
 
       const song = data.songs.find(s => s.id === songId);
       if (!song) throw new Error(`Song not found: ${songId}`);
 
       song.sessions.push({ date, notes });
+      actionTaken = true;
+      labelToAdd = 'log-practice';
+    } else if (title.startsWith('[Delete Song]:') || labels.includes('delete-song')) {
+      console.log('Detected: Delete Song');
+      const songId = extractField(body, 'Song ID');
+      
+      if (!songId) throw new Error('Missing song ID in issue body');
+
+      const initialLength = data.songs.length;
+      data.songs = data.songs.filter(s => s.id !== songId);
+      
+      if (data.songs.length < initialLength) {
+        console.log(`Deleted song with id: ${songId}`);
+        actionTaken = true;
+        labelToAdd = 'delete-song';
+      } else {
+        console.log(`Song with id "${songId}" not found for deletion.`);
+      }
+    } else {
+      console.log('No recognized action in issue title or labels. Skipping.');
+      // Important: We don't want to fail the job if a random issue is opened
+      return;
     }
 
-    fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
-    console.log('Successfully updated data/songs.json');
+    if (actionTaken) {
+      fs.writeFileSync(dataPath, JSON.stringify(data, null, 2));
+      console.log('Successfully updated data/songs.json');
+
+      // Add label to issue if it's missing
+      if (labelToAdd && !labels.includes(labelToAdd)) {
+        const octokit = github.getOctokit(process.env.GITHUB_TOKEN);
+        await octokit.rest.issues.addLabels({
+          owner: github.context.repo.owner,
+          repo: github.context.repo.repo,
+          issue_number: issue.number,
+          labels: [labelToAdd]
+        });
+        console.log(`Added label: ${labelToAdd}`);
+      }
+    } else {
+      core.setFailed('No changes made. Please check the issue content.');
+    }
 
   } catch (error) {
     core.setFailed(error.message);
@@ -53,8 +103,8 @@ async function run() {
 }
 
 function extractField(body, fieldName) {
-  // GitHub Issue forms use ### Label\n\nValue or similar structures
-  const regex = new RegExp(`### ${fieldName}\\s+([\\s\\S]*?)(?=\\n###|$)`, 'i');
+  // Enhanced regex to handle \r\n and optional spaces
+  const regex = new RegExp(`### ${fieldName}\\s+([\\s\\S]*?)(?=\\n###|\\r\\n###|$)`, 'i');
   const match = body.match(regex);
   return match ? match[1].trim() : null;
 }

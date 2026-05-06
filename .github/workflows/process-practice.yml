@@ -10,7 +10,6 @@ permissions:
 
 jobs:
   process-issue:
-    if: contains(github.event.issue.labels.*.name, 'new-song') || contains(github.event.issue.labels.*.name, 'log-practice')
     runs-on: ubuntu-latest
     steps:
       - name: Checkout repository

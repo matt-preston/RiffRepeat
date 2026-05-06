@@ -1,0 +1,16 @@
+name: Delete Song
+description: Remove a song from your practice list
+title: "[Delete Song]: "
+labels: ["delete-song"]
+body:
+  - type: markdown
+    attributes:
+      value: |
+        **Warning**: This will permanently remove the song and all its practice history from your tracker.
+  - type: input
+    id: song_id
+    attributes:
+      label: Song ID
+      placeholder: e.g. wonderwall
+    validations:
+      required: true
