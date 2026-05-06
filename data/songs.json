@@ -107,6 +107,15 @@
       "notes": "_No response_",
       "addedAt": "2026-05-06T20:32:19.788Z",
       "sessions": []
+    },
+    {
+      "id": "blackbird",
+      "title": "Blackbird",
+      "artist": "The Beatles",
+      "category": "acoustic",
+      "notes": "_No response_",
+      "addedAt": "2026-05-06T20:32:43.643Z",
+      "sessions": []
     }
   ]
 }
