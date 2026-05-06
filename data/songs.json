@@ -8,6 +8,15 @@
       "notes": "Drop D",
       "addedAt": "2026-05-06T18:04:24.836Z",
       "sessions": []
+    },
+    {
+      "id": "supersonic",
+      "title": "Supersonic",
+      "artist": "Oasis",
+      "category": "electric",
+      "notes": "_No response_",
+      "addedAt": "2026-05-06T18:07:06.141Z",
+      "sessions": []
     }
   ]
 }
