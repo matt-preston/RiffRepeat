@@ -188,6 +188,15 @@
       "notes": "_No response_",
       "addedAt": "2026-05-06T20:37:52.853Z",
       "sessions": []
+    },
+    {
+      "id": "day-tripper",
+      "title": "Day Tripper",
+      "artist": "The Beatles",
+      "category": "electric",
+      "notes": "_No response_",
+      "addedAt": "2026-05-06T20:38:14.398Z",
+      "sessions": []
     }
   ]
 }
