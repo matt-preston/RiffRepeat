@@ -277,11 +277,9 @@
 
                 openAddSong(category) {
                     this.showAddModal = false;
-                    const params = new URLSearchParams({
-                        template: 'add-song.yml',
-                        song_category: category
-                    });
-                    const url = `${this.repoUrl}/issues/new?${params.toString()}`;
+                    const value = category.charAt(0).toUpperCase() + category.slice(1);
+                    // Use manual concatenation for the category to ensure it matches the dropdown string exactly
+                    const url = `${this.repoUrl}/issues/new?template=add-song.yml&category=${value}`;
                     window.open(url, '_blank');
                 },
 

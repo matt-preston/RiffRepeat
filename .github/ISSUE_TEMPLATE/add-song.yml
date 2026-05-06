@@ -18,11 +18,11 @@ body:
     validations:
       required: true
   - type: dropdown
-    id: song_category
+    id: category
     attributes:
       label: Category
       options:
-        - acoustic
-        - electric
+        - Acoustic
+        - Electric
     validations:
       required: true

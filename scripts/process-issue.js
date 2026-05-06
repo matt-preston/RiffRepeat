@@ -23,7 +23,7 @@ async function run() {
       console.log('Detected: New Song');
       const songTitle = extractField(body, 'Song Title');
       const artist = extractField(body, 'Artist');
-      const category = extractField(body, 'Category') || 'acoustic';
+      const category = (extractField(body, 'Category') || 'Acoustic').toLowerCase();
       
       if (!songTitle || !artist) throw new Error('Missing title or artist');
 
