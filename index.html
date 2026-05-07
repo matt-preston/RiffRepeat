@@ -148,8 +148,14 @@
 
         <!-- Footer -->
         <footer class="mt-20 text-center">
-            <div class="text-slate-400 text-sm">Powered by GitHub Actions & Issues</div>
-            <div class="flex justify-center gap-6 mt-4">
+            <div class="flex flex-col items-center gap-2">
+                <div class="text-slate-400 text-sm">Powered by GitHub Actions & Issues</div>
+                <div class="flex items-center gap-2 text-[10px] font-bold uppercase tracking-widest text-slate-300">
+                    <div x-show="isPolling" class="w-2 h-2 bg-indigo-400 rounded-full animate-pulse"></div>
+                    <span x-text="isPolling ? 'Checking for updates...' : 'Next check in ' + countdown + 's'"></span>
+                </div>
+            </div>
+            <div class="flex justify-center gap-6 mt-6">
                 <a :href="repoUrl" class="text-indigo-600 hover:underline text-xs font-bold uppercase tracking-widest">Source Repo</a>
                 <span class="text-slate-200">|</span>
                 <a href="#" @click.prevent="window.location.reload()" class="text-slate-400 hover:text-indigo-600 text-xs font-bold uppercase tracking-widest">Refresh Data</a>
@@ -185,16 +191,46 @@
                 sortDir: 'desc',
                 showAddModal: false,
                 repoUrl: '',
+                isPolling: false,
+                countdown: 60,
+                dataHash: '',
 
                 async init() {
                     this.detectRepoUrl();
+                    await this.fetchData();
+                    this.startPolling();
+                },
+
+                async fetchData() {
+                    this.isPolling = true;
                     try {
-                        const res = await fetch('data/songs.json');
-                        const data = await res.json();
-                        this.songs = data.songs;
+                        // Cache-busting: add a timestamp to the URL
+                        const res = await fetch(`data/songs.json?t=${Date.now()}`);
+                        const text = await res.text();
+                        
+                        // Simple hash-like check to see if content changed
+                        if (text !== this.dataHash) {
+                            console.log('Data change detected, updating UI...');
+                            const data = JSON.parse(text);
+                            this.songs = data.songs;
+                            this.dataHash = text;
+                        }
                     } catch (e) {
                         console.error('Failed to load songs:', e);
+                    } finally {
+                        setTimeout(() => { this.isPolling = false; }, 1000);
                     }
+                },
+
+                startPolling() {
+                    setInterval(() => {
+                        if (this.countdown <= 0) {
+                            this.fetchData();
+                            this.countdown = 60;
+                        } else {
+                            this.countdown--;
+                        }
+                    }, 1000);
                 },
 
                 detectRepoUrl() {
