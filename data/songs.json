@@ -168,7 +168,11 @@
       "category": "acoustic",
       "notes": "",
       "addedAt": "2026-05-06T20:35:48.980Z",
-      "sessions": []
+      "sessions": [
+        {
+          "date": "2026-05-07"
+        }
+      ]
     },
     {
       "id": "space-oddity",
