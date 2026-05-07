@@ -123,7 +123,11 @@
       "category": "acoustic",
       "notes": "",
       "addedAt": "2026-05-06T20:32:43.643Z",
-      "sessions": []
+      "sessions": [
+        {
+          "date": "2026-05-07"
+        }
+      ]
     },
     {
       "id": "smooth",
