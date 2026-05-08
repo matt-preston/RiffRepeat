@@ -32,6 +32,35 @@
             </div>
         </header>
 
+        <!-- Practice Suggestion -->
+        <template x-if="suggestedSong">
+            <div class="mb-12 bg-indigo-600 rounded-3xl p-8 text-white shadow-2xl shadow-indigo-200 flex flex-col md:flex-row items-center justify-between gap-6 relative overflow-hidden">
+                <div class="absolute top-0 right-0 p-8 opacity-10 pointer-events-none">
+                    <svg xmlns="http://www.w3.org/2000/svg" class="h-32 w-32" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 4-8 4z"/></svg>
+                </div>
+                <div class="flex items-center gap-6 relative z-10">
+                    <div class="hidden md:flex items-center justify-center w-16 h-16 bg-white/20 backdrop-blur-md rounded-2xl text-3xl">
+                        💡
+                    </div>
+                    <div>
+                        <div class="text-indigo-200 text-sm font-bold uppercase tracking-widest mb-1">Suggested for you</div>
+                        <h2 class="text-3xl font-black" x-text="suggestedSong.title"></h2>
+                        <p class="text-indigo-100 opacity-80" x-text="suggestedSong.artist"></p>
+                    </div>
+                </div>
+                <div class="flex items-center gap-3 relative z-10 w-full md:w-auto">
+                    <button @click="openPopup(getLogPracticeUrl(suggestedSong))" class="flex-1 md:flex-none py-4 px-8 bg-white text-indigo-600 rounded-2xl font-black hover:bg-indigo-50 transition-all shadow-lg text-center">
+                        Practice Now
+                    </button>
+                    <template x-if="suggestedSong.youtube">
+                        <a :href="suggestedSong.youtube" target="_blank" class="p-4 bg-white/20 hover:bg-white/30 rounded-2xl transition-all" title="Watch on YouTube">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 4-8 4z"/></svg>
+                        </a>
+                    </template>
+                </div>
+            </div>
+        </template>
+
         <!-- Filters & Stats -->
         <div class="grid grid-cols-1 lg:grid-cols-4 gap-6 mb-8">
             <div class="lg:col-span-1 flex flex-col gap-4">
@@ -297,6 +326,35 @@
                 get practicedThisWeek() {
                     const weekAgo = new Date(Date.now() - 7 * 24 * 60 * 60 * 1000);
                     return this.songs.filter(s => s.sessions.some(sess => new Date(sess.date) >= weekAgo)).length;
+                },
+
+                get suggestedSong() {
+                    if (this.songs.length === 0) return null;
+
+                    const never = this.songs.filter(s => !s.sessions || s.sessions.length === 0);
+                    const practiced = this.songs.filter(s => s.sessions && s.sessions.length > 0);
+
+                    never.sort((a, b) => {
+                        // Sub-sort by when added (day only)
+                        const dateA = (a.addedAt || '').substring(0, 10);
+                        const dateB = (b.addedAt || '').substring(0, 10);
+                        if (dateA !== dateB) return dateA.localeCompare(dateB);
+                        // Sub-sort again by title
+                        return a.title.localeCompare(b.title);
+                    });
+
+                    practiced.sort((a, b) => {
+                        // Least recently practiced
+                        const lastA = this.getLatestDate(a).getTime();
+                        const lastB = this.getLatestDate(b).getTime();
+                        if (lastA !== lastB) return lastA - lastB;
+                        // Least often practiced
+                        if (a.sessions.length !== b.sessions.length) return a.sessions.length - b.sessions.length;
+                        // Tie breaker: title
+                        return a.title.localeCompare(b.title);
+                    });
+
+                    return never.length > 0 ? never[0] : (practiced.length > 0 ? practiced[0] : null);
                 },
 
                 getLatestDate(song) {
