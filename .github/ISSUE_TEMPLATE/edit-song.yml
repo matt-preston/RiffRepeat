@@ -1,0 +1,38 @@
+name: Edit Song
+description: Update metadata for an existing song
+title: "[Edit Song]: "
+labels: ["edit-song"]
+body:
+  - type: input
+    id: edit_song_id
+    attributes:
+      label: Song ID
+      description: The internal ID of the song (cannot be changed)
+    validations:
+      required: true
+  - type: input
+    id: edit_song_title
+    attributes:
+      label: Song Title
+    validations:
+      required: true
+  - type: input
+    id: edit_artist
+    attributes:
+      label: Artist
+    validations:
+      required: true
+  - type: input
+    id: edit_category
+    attributes:
+      label: Category
+    validations:
+      required: true
+  - type: input
+    id: edit_youtube
+    attributes:
+      label: YouTube Link
+  - type: textarea
+    id: edit_notes
+    attributes:
+      label: Notes

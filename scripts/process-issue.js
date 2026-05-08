@@ -25,6 +25,7 @@ async function run() {
       const artist = extractField(body, 'Artist');
       let category = (extractField(body, 'Category') || '').toLowerCase().trim();
       const notes = extractField(body, 'Notes') || '';
+      const youtube = extractField(body, 'YouTube Link') || '';
       
       if (!songTitle || !artist) throw new Error('Missing title or artist');
 
@@ -39,7 +40,7 @@ async function run() {
       if (data.songs.find(s => s.id === id)) {
         console.log(`Song with id "${id}" already exists.`);
       } else {
-        data.songs.push({
+        const newSong = {
           id,
           title: songTitle,
           artist,
@@ -47,10 +48,38 @@ async function run() {
           notes,
           addedAt: new Date().toISOString(),
           sessions: []
-        });
+        };
+        if (youtube) newSong.youtube = youtube;
+        data.songs.push(newSong);
         actionTaken = true;
         labelToAdd = 'new-song';
       }
+    } else if (title.startsWith('[Edit Song]:') || labels.includes('edit-song')) {
+      console.log('Detected: Edit Song');
+      const songId = extractField(body, 'Song ID');
+      const songTitle = extractField(body, 'Song Title');
+      const artist = extractField(body, 'Artist');
+      let category = (extractField(body, 'Category') || '').toLowerCase().trim();
+      const notes = extractField(body, 'Notes') || '';
+      const youtube = extractField(body, 'YouTube Link') || '';
+
+      if (!songId) throw new Error('Missing song ID');
+
+      const song = data.songs.find(s => s.id === songId);
+      if (!song) throw new Error(`Song not found: ${songId}`);
+
+      if (songTitle) song.title = songTitle;
+      if (artist) song.artist = artist;
+      if (category === 'acoustic' || category === 'electric') song.category = category;
+      song.notes = notes;
+      if (youtube) {
+        song.youtube = youtube;
+      } else {
+        delete song.youtube;
+      }
+      
+      actionTaken = true;
+      labelToAdd = 'edit-song';
     } else if (title.startsWith('[Log Practice]:') || labels.includes('log-practice')) {
       console.log('Detected: Log Practice');
       const songId = extractField(body, 'Song ID');

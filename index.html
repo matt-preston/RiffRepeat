@@ -110,7 +110,14 @@
                         <template x-for="song in filteredAndSortedSongs" :key="song.id">
                             <tr class="hover:bg-slate-50 transition group">
                                 <td class="px-6 py-4">
-                                    <div class="font-bold text-slate-800" x-text="song.title"></div>
+                                    <div class="flex items-center gap-2">
+                                        <div class="font-bold text-slate-800" x-text="song.title"></div>
+                                        <template x-if="song.youtube">
+                                            <a :href="song.youtube" target="_blank" class="text-rose-500 hover:text-rose-600 transition" title="Watch on YouTube">
+                                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" viewBox="0 0 24 24" fill="currentColor"><path d="M19.615 3.184c-3.604-.246-11.631-.245-15.23 0-3.897.266-4.356 2.62-4.385 8.816.029 6.185.484 8.549 4.385 8.816 3.6.245 11.626.246 15.23 0 3.897-.266 4.356-2.62 4.385-8.816-.029-6.185-.484-8.549-4.385-8.816zm-10.615 12.816v-8l8 4-8 4z"/></svg>
+                                            </a>
+                                        </template>
+                                    </div>
                                     <div class="text-xs text-slate-400 md:hidden" x-text="song.artist"></div>
                                 </td>
                                 <td class="px-6 py-4 hidden md:table-cell">
@@ -131,6 +138,9 @@
                                 <td class="px-6 py-4 text-right space-x-1 whitespace-nowrap">
                                     <button @click="openPopup(getLogPracticeUrl(song))" class="inline-flex items-center justify-center p-2 bg-slate-100 hover:bg-indigo-600 hover:text-white text-slate-600 rounded-lg transition" title="Log Practice">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M12 6v6m0 0v6m0-6h6m-6 0H6" /></svg>
+                                    </button>
+                                    <button @click="openPopup(getEditSongUrl(song))" class="inline-flex items-center justify-center p-2 hover:bg-amber-50 hover:text-amber-600 text-slate-300 rounded-lg transition" title="Edit Metadata">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M11 5H6a2 2 0 00-2 2v11a2 2 0 002 2h11a2 2 0 002-2v-5m-1.414-9.414a2 2 0 112.828 2.828L11.828 15H9v-2.828l8.586-8.586z" /></svg>
                                     </button>
                                     <button @click="openPopup(getDeleteSongUrl(song))" class="inline-flex items-center justify-center p-2 hover:bg-rose-50 hover:text-rose-600 text-slate-300 rounded-lg transition" title="Delete Song">
                                         <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M19 7l-.867 12.142A2 2 0 0116.138 21H7.862a2 2 0 01-1.995-1.858L5 7m5 4v6m4-6v6m1-10V4a1 1 0 00-1-1h-4a1 1 0 00-1 1v3M4 7h16" /></svg>
@@ -156,7 +166,7 @@
                 </div>
             </div>
             <div class="flex justify-center gap-6 mt-6">
-                <a :href="repoUrl" class="text-indigo-600 hover:underline text-xs font-bold uppercase tracking-widest">Source Repo</a>
+                <a :href="repoUrl" class="text-indigo-600 hover:underline text-xs font-bold uppercase tracking-widest" target="_blank">Source Repo</a>
                 <span class="text-slate-200">|</span>
                 <a href="#" @click.prevent="window.location.reload()" class="text-slate-400 hover:text-indigo-600 text-xs font-bold uppercase tracking-widest">Refresh Data</a>
             </div>
@@ -204,11 +214,9 @@
                 async fetchData() {
                     this.isPolling = true;
                     try {
-                        // Cache-busting: add a timestamp to the URL
                         const res = await fetch(`data/songs.json?t=${Date.now()}`);
                         const text = await res.text();
                         
-                        // Simple hash-like check to see if content changed
                         if (text !== this.dataHash) {
                             console.log('Data change detected, updating UI...');
                             const data = JSON.parse(text);
@@ -327,6 +335,20 @@
                     this.openPopup(`${this.repoUrl}/issues/new?${params.toString()}`);
                 },
 
+                getEditSongUrl(song) {
+                    const params = new URLSearchParams({
+                        template: 'edit-song.yml',
+                        edit_song_id: song.id,
+                        edit_song_title: song.title,
+                        edit_artist: song.artist,
+                        edit_category: song.category,
+                        edit_youtube: song.youtube || '',
+                        edit_notes: song.notes || '',
+                        title: `[Edit Song]: ${song.title}`
+                    });
+                    return `${this.repoUrl}/issues/new?${params.toString()}`;
+                },
+
                 getLogPracticeUrl(song) {
                     const today = new Date().toISOString().split('T')[0];
                     const params = new URLSearchParams({
@@ -352,12 +374,7 @@
                     const height = 900;
                     const left = (window.screen.width / 2) - (width / 2);
                     const top = (window.screen.height / 2) - (height / 2);
-                    
-                    window.open(
-                        url, 
-                        'GitHubIssue', 
-                        `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`
-                    );
+                    window.open(url, 'GitHubIssue', `width=${width},height=${height},left=${left},top=${top},scrollbars=yes,resizable=yes`);
                 }
             }));
         });

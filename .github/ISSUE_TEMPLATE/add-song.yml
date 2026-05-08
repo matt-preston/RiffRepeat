@@ -25,6 +25,11 @@ body:
     validations:
       required: true
   - type: input
+    id: song_youtube
+    attributes:
+      label: YouTube Link
+      placeholder: https://www.youtube.com/watch?v=...
+  - type: input
     id: song_notes
     attributes:
       label: Notes
