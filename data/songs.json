@@ -63,7 +63,11 @@
       "category": "acoustic",
       "notes": "",
       "addedAt": "2026-05-06T20:27:52.604Z",
-      "sessions": []
+      "sessions": [
+        {
+          "date": "2026-05-16"
+        }
+      ]
     },
     {
       "id": "you-got-it",
