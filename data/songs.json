@@ -135,7 +135,11 @@
       "category": "electric",
       "notes": "",
       "addedAt": "2026-05-06T20:32:19.788Z",
-      "sessions": [],
+      "sessions": [
+        {
+          "date": "2026-05-17"
+        }
+      ],
       "youtube": "https://www.youtube.com/watch?v=tPgf_btTFlc"
     },
     {
