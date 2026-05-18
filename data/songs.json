@@ -34,7 +34,11 @@
       "category": "acoustic",
       "notes": "",
       "addedAt": "2026-05-06T20:24:43.907Z",
-      "sessions": [],
+      "sessions": [
+        {
+          "date": "2026-05-18"
+        }
+      ],
       "youtube": "https://www.youtube.com/watch?v=1uYWYWPc9HU"
     },
     {
