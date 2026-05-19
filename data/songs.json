@@ -48,7 +48,11 @@
       "category": "acoustic",
       "notes": "Capo 3rd fret",
       "addedAt": "2026-05-06T20:26:38.041Z",
-      "sessions": [],
+      "sessions": [
+        {
+          "date": "2026-05-19"
+        }
+      ],
       "youtube": "https://www.youtube.com/watch?v=9yj2j2CkMko"
     },
     {
