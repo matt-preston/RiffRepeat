@@ -306,6 +306,16 @@
       "notes": "",
       "addedAt": "2026-05-06T20:39:41.667Z",
       "sessions": []
+    },
+    {
+      "id": "when-the-sun-goes-down",
+      "title": "When the Sun Goes Down",
+      "artist": "Arctic Monkeys",
+      "category": "electric",
+      "notes": "",
+      "addedAt": "2026-10-16T11:06:40.940Z",
+      "sessions": [],
+      "youtube": "https://www.youtube.com/watch?v=zr0p6qqtlcw"
     }
   ]
 }
